@@ -11,7 +11,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24 # Upgraded to 24 to clear the deprecation warnings!
+          node-version: 24
 
       - name: Install Monorepo Dependencies
         working-directory: ./AuditDiff
@@ -20,5 +20,6 @@ jobs:
 
       - name: Package Desktop Executable
         working-directory: ./AuditDiff
+        # Changed this to use your project's custom distribution builder!
         run: |
-          npm run package
+          npm run dist
