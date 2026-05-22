@@ -1,0 +1,7 @@
+{
+  "name": "@auditdiff/rules",
+  "version": "1.0.0",
+  "description": "Smart contract severity rules engine",
+  "main": "index.js",
+  "dependencies": {}
+}

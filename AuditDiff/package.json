@@ -1,0 +1,30 @@
+{
+  "name": "auditdiff",
+  "version": "1.0.0",
+  "description": "Smart contract state change auditor",
+  "main": "electron.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\" \"npm run dev:intel\"",
+    "dev:api": "cd packages/api && node index.js",
+    "dev:frontend": "cd packages/frontend && npx vite --port 5173",
+    "dev:intel": "cd packages/intel && node index.js",
+    "db:migrate": "cd packages/database && node migrate.js",
+    "electron": "electron .",
+    "build:frontend": "cd packages/frontend && npx vite build",
+    "dist": "npm run build:frontend && electron-builder --win",
+    "start": "npm run db:migrate && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.auditdiff.app",
+    "productName": "AuditDiff",
+    "files": ["electron.js", "packages/api/**", "packages/scanner/**", "packages/rules/**", "packages/database/**", "packages/intel/**", "packages/frontend/dist/**"],
+    "extraResources": [{"from": ".env.example", "to": ".env.example"}],
+    "win": {"target": "nsis", "icon": "assets/icon.ico"},
+    "nsis": {"oneClick": false, "allowToChangeInstallationDirectory": true}
+  }
+}

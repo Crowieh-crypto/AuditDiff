@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: auditdiff
+      POSTGRES_USER: auditdiff
+      POSTGRES_PASSWORD: auditdiff_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auditdiff"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build: ./packages/database
+    environment:
+      DATABASE_URL: postgres://auditdiff:auditdiff_pass@postgres:5432/auditdiff
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: node migrate.js
+
+  api:
+    build: ./packages/api
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgres://auditdiff:auditdiff_pass@postgres:5432/auditdiff
+      ALCHEMY_API_KEY: ${ALCHEMY_API_KEY}
+      ETHERSCAN_API_KEY: ${ETHERSCAN_API_KEY}
+      INTEL_SERVICE_URL: http://intel:3002
+      PORT: 3001
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - ./packages/scanner:/app/scanner
+      - ./packages/rules:/app/rules
+
+  intel:
+    build: ./packages/intel
+    ports:
+      - "3002:3002"
+    environment:
+      ALCHEMY_API_KEY: ${ALCHEMY_API_KEY}
+      ETHERSCAN_API_KEY: ${ETHERSCAN_API_KEY}
+      PORT: 3002
+
+  frontend:
+    build: ./packages/frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:3001
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
