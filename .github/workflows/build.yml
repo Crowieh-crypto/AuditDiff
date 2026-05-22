@@ -11,11 +11,14 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24 # Upgraded to 24 to clear the deprecation warnings!
 
-      - name: Install dependencies and Build Exe
-        # This tells GitHub's builder computer to walk straight into your main directory
+      - name: Install Monorepo Dependencies
         working-directory: ./AuditDiff
         run: |
           npm install
+
+      - name: Package Desktop Executable
+        working-directory: ./AuditDiff
+        run: |
           npm run package
