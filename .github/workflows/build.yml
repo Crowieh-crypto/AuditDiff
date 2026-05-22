@@ -11,9 +11,11 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # Fixed from node-size to node-version!
+          node-version: 20
 
       - name: Install dependencies and Build Exe
+        # The line below tells GitHub to open the AuditDiff folder first!
+        working-directory: ./AuditDiff 
         run: |
           npm install
           npm run package
