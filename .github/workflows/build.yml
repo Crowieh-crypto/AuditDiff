@@ -1,5 +1,5 @@
 name: Build Desktop Executable
-on: [push] # This tells GitHub to build it every time you update your repo
+on: [push]
 
 jobs:
   release:
@@ -11,15 +11,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-size: 20
+          node-version: 20 # Fixed from node-size to node-version!
 
       - name: Install dependencies and Build Exe
         run: |
           npm install
           npm run package
-
-      - name: Upload Executable to GitHub
-        uses: actions/upload-artifact@v4
-        with:
-          name: AuditDiff-Windows-App
-          path: dist/
