@@ -33,21 +33,36 @@ function startBackend() {
   const apiDir = path.join(__dirname, 'packages/api')
   const intelDir = path.join(__dirname, 'packages/intel')
 
-  apiProcess = spawn('node', ['index.js'], {
+  // In development, execute with standard 'node'. 
+  // In a packaged production app, use Electron's internal runtime binary (process.execPath)
+  const runtimeExecutor = isDev ? 'node' : process.execPath
+
+  // Points directly to the entry scripts
+  const apiScript = path.join(apiDir, 'index.js')
+  const intelScript = path.join(intelDir, 'index.js')
+
+  // Build execution arguments depending on the current environment mode
+  const apiArgs = isDev ? ['index.js'] : [apiScript]
+  const intelArgs = isDev ? ['index.js'] : [intelScript]
+
+  apiProcess = spawn(runtimeExecutor, apiArgs, {
     cwd: apiDir,
     env: { ...process.env, PORT: API_PORT },
     stdio: 'pipe'
   })
 
-  intelProcess = spawn('node', ['index.js'], {
+  intelProcess = spawn(runtimeExecutor, intelArgs, {
     cwd: intelDir,
     env: { ...process.env, PORT: 3002 },
     stdio: 'pipe'
   })
 
+  // Log background operational streams to help debug any scanning failures
   apiProcess.stdout.on('data', d => console.log('[api]', d.toString()))
-  apiProcess.stderr.on('data', d => console.error('[api]', d.toString()))
+  apiProcess.stderr.on('data', d => console.error('[api-err]', d.toString()))
+  
   intelProcess.stdout.on('data', d => console.log('[intel]', d.toString()))
+  intelProcess.stderr.on('data', d => console.error('[intel-err]', d.toString()))
 }
 
 async function createWindow() {
