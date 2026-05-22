@@ -1,5 +1,7 @@
 name: Build Desktop Executable
-on: [push]
+on:
+  push:
+  workflow_dispatch: # 👈 This adds a manual "Run workflow" button to your interface!
 
 jobs:
   release:
