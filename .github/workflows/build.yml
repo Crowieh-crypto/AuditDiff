@@ -1,5 +1,6 @@
 name: Build Desktop Executable
-on: [push]
+on: [push, workflow_dispatch]
+
 jobs:
   release:
     runs-on: windows-latest
@@ -19,6 +20,12 @@ jobs:
 
       - name: Package Desktop Executable
         working-directory: ./AuditDiff
-        # Changed this to use your project's custom distribution builder!
         run: |
           npm run dist
+
+      # 🚀 THIS NEW STEP MAKES THE DOWNLOAD LINK APPEAR:
+      - name: Upload Windows Executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: AuditDiff-Windows-Installer
+          path: ./AuditDiff/dist/*.exe
