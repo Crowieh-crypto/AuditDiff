@@ -12,7 +12,8 @@
     "electron": "electron .",
     "build:frontend": "cd packages/frontend && npx vite build",
     "dist": "npm run build:frontend && electron-builder --win",
-    "start": "npm run db:migrate && npm run dev"
+    "start": "npm run db:migrate && npm run dev",
+    "start:dev": "concurrently \"npm run dev\" \"electron .\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
@@ -22,9 +23,35 @@
   "build": {
     "appId": "com.auditdiff.app",
     "productName": "AuditDiff",
-    "files": ["electron.js", "packages/api/**", "packages/scanner/**", "packages/rules/**", "packages/database/**", "packages/intel/**", "packages/frontend/dist/**"],
-    "extraResources": [{"from": ".env.example", "to": ".env.example"}],
-    "win": {"target": "nsis", "icon": "assets/icon.ico"},
-    "nsis": {"oneClick": false, "allowToChangeInstallationDirectory": true}
+    "files": [
+      "electron.js",
+      "packages/api/**/*",
+      "packages/scanner/**/*",
+      "packages/rules/**/*",
+      "packages/database/**/*",
+      "packages/intel/**/*",
+      "packages/frontend/dist/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": ".env.example",
+        "to": ".env.example"
+      }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Crowieh-crypto",
+        "repo": "AuditDiff"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }
