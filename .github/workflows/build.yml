@@ -1,0 +1,21 @@
+name: Build Desktop Executable
+on: [push]
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies and Build Exe
+        # This tells GitHub's builder computer to walk straight into your main directory
+        working-directory: ./AuditDiff
+        run: |
+          npm install
+          npm run package
